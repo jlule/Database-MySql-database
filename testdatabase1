@@ -1,1 +1,66 @@
 
+import mysql.connector
+
+mydb = mysql.connector.connect(
+    host = "localhost",
+    user ="root",
+    passwd ="root",
+    database = "testdatabase1"
+)
+
+mycursor = mydb.cursor()
+
+# #
+# Testing connection by accessing sakila database
+# mycursor.execute("use sakila;")
+# mycursor.execute("show tables;")
+# data = mycursor.fetchall()
+# print(data)
+
+#
+# CREATE A TABLE
+# mycursor.execute("CREATE TABLE Person (name VARCHAR(50), age smallint UNSIGNED, personID int PRIMARY KEY AUTO_INCREMENT)")
+# #
+# # INSERT INTO DATABASE
+# mycursor.execute("INSERT INTO Person(name, age)VALUES(%s,%s) ", ("Jackson", 30))
+# COMMIT ADDS INFORMATION TO DATABASE
+# mydb.commit()
+# mycursor.execute("SELECT * FROM Person")
+
+
+
+
+
+Q1 = "CREATE TABLE Users (id  int PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50), passwd VARCHAR(50))"
+Q2 = "CREATE TABLE Scores (userId int PRIMARY KEY, FOREIGN KEY(userId) REFERENCES Users(id), game1 int DEFAULT 0,  game2 int DEFAULT 0)"
+
+# mycursor.execute(Q1)
+# mycursor.execute(Q2)
+# mycursor.execute("SHOW TABLES")
+# for x in mycursor:
+#      print(x)
+
+
+users = [("James", "james2248"),
+         ("Jona", "jonabomb"),
+         ("Heather","heatherby's")]
+user_scores = [(45,100),
+                (30,200),
+                (46,124)]
+
+# mycursor.executemany("INSERT INTO Users (name, passwd) VALUES (%s, %s)" users)
+Q3 = "INSERT INTO Users (name, passwd) VALUES (%s, %s)"
+Q4 = "INSERT INTO Scores(userId, game1, game2) VALUES (%s, %s, %s)"
+
+for x, user in enumerate(users):
+    mycursor.execute(Q3, user)
+    last_id  = mycursor.lastrowid
+    mycursor.execute( Q4, (last_id,) +  user_scores[x])
+mydb.commit()
+
+mycursor.execute("SELECT * FROM Scores")
+for x in mycursor:
+     print(x)
+mycursor.execute("SELECT * FROM Users")
+for x in mycursor:
+     print(x)
